@@ -85,6 +85,12 @@ if (mobileCheck() == true) {
     resProp.height = 209 * .30;
 }
 
+// high score
+let highScore;
+if (localStorage.getItem("highScore") === null) {
+  localStorage.setItem("highScore", 0);
+}
+
 // When the entire page finishes loading, run this function
 // browser will automatically invoke them when that event happens
 window.onload = function() {
@@ -218,6 +224,15 @@ function update() {
         ctx.font = '48px "Press Start 2P"';
         ctx.fillText(score, isMobile == true? GOSProp.width/1.6: GOSProp.width/0.8, isMobile == true? GOSProp.height/1.6: GOSProp.height/1.7);
         ctx.strokeText(score, isMobile == true? GOSProp.width/1.6: GOSProp.width/0.8, isMobile == true? GOSProp.height/1.6: GOSProp.height/1.7);
+        
+        highScore = localStorage.getItem('highScore');
+        if (score > highScore) {
+            localStorage.setItem("highScore", score);
+        }
+        let updatedHScore = localStorage.getItem('highScore');
+        ctx.font = '48px "Press Start 2P"';
+        ctx.fillText(updatedHScore, isMobile == true? GOSProp.width/1.6: GOSProp.width/0.8, isMobile == true? GOSProp.height/0.99: GOSProp.height/1.04);
+        ctx.strokeText(updatedHScore, isMobile == true? GOSProp.width/1.6: GOSProp.width/0.8, isMobile == true? GOSProp.height/0.99: GOSProp.height/1.04);
     }
 }
 
@@ -264,10 +279,10 @@ function playAudio(status) {
         var audio = new Audio('./assets/music/sfx_point.wav');
         audio.play();
     } else if (status == "die") {
-        var audio = new Audio('./assets/music/sfx_die.wav');
+        var audio = new Audio('./assets/music/sfx_mcdie.mp3');
         audio.play();
     } else if (status == "wing") {
-        var audio = new Audio('./assets/music/sfx_swooshing.wav');
+        var audio = new Audio('./assets/music/sfx_bruh.mp3');
         audio.play();
     }
 }
