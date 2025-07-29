@@ -3,7 +3,7 @@ let game;
 let gameHeight = 640;
 let gameWidth = 360;
 
-let context; // context refers to the rendering context =  provides the drawing functions & properties
+let ctx; // context refers to the rendering context =  provides the drawing functions & properties
 
 // birdie
 let birdWidth = 34; // in pixels
@@ -39,6 +39,7 @@ let gravity = 0.4;
 
 // game mech
 let isGameOver = false;
+let score = 0;
 
 // When the entire page finishes loading, run this function
 // browser will automatically invoke them when that event happens
@@ -89,14 +90,32 @@ function update() {
         let pipe = pipeArr[i];
         pipe.x += veloX;
         ctx.drawImage(pipe.img, pipe.x, pipe.y, pipe.width, pipe.height);
+
+        // check if the bird passed the pipe
+        if (!pipe.isPassed && bird.x > pipe.x + pipe.width) {
+            score += 0.5;
+            pipe.isPassed = true;
+        }
+
+        // detect collision of bird and pipe
         if (detectCollision(bird, pipe)) {
             isGameOver = true;
         }
     }
 
+    // score
+    ctx.fillStyle = "white";
+    ctx.font = "45px sans-serif";
+    ctx.fillText(score, 5, 45) // var, x, y pos
+
     // apply velocity to the bird
     birdVeloY += gravity;
     bird.y = Math.max(bird.y + birdVeloY, 0); // this returns the largest value which limits it to current bird position and 0 or top
+    
+    if (bird.y > gameHeight) {
+        isGameOver = true;
+    }
+    
     // bird physics
     birdPhys();
 }
@@ -104,7 +123,7 @@ function update() {
 
 function genPipes() {
     if (isGameOver) {
-        return
+        return;
     }
     let randomPipeY = pipeY - pipeHeight/4 - Math.random()*(pipeHeight/2);
 
