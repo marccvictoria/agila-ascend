@@ -1,7 +1,7 @@
 // canvas dimensions
 let game;
 let gameHeight = 640;
-let gameWidth = 360;
+let gameWidth = 800;
 
 let ctx; // context refers to the rendering context =  provides the drawing functions & properties
 
@@ -34,7 +34,7 @@ let bottomPipeImg;
 
 // physics
 let veloX = -2;
-let birdVeloY = 3; // bird jump speed
+let birdVeloY = 0; // bird jump speed
 let gravity = 0.4;
 
 // game mech
@@ -66,7 +66,15 @@ window.onload = function() {
 
     document.addEventListener('keyup', (e) => {
     if (e.code === 'Space' || e.code === 'ArrowUp'){
-        birdVeloY = -5; // this is the upward jump, the lower the val, the higher the jump
+        birdVeloY = -6; // this is the upward jump, the lower the val, the higher the jump
+
+        // reset game if game over
+        if (isGameOver) {
+            bird.y = birdY;
+            pipeArr = [];
+            score = 0;
+            isGameOver = false;
+        }
     }
     })
 
@@ -95,11 +103,13 @@ function update() {
         if (!pipe.isPassed && bird.x > pipe.x + pipe.width) {
             score += 0.5;
             pipe.isPassed = true;
+            playAudio("point");
         }
 
         // detect collision of bird and pipe
         if (detectCollision(bird, pipe)) {
             isGameOver = true;
+            playAudio("die");
         }
     }
 
@@ -108,16 +118,24 @@ function update() {
     ctx.font = "45px sans-serif";
     ctx.fillText(score, 5, 45) // var, x, y pos
 
+    // clear pipes to free up memory
+    while (pipeArr.length > 0 && pipeArr[0].x < -pipeWidth) { // instead of 0, -pipeWidth is used = right side of pipe
+        pipeArr.shift(); // removes first element in the array
+    }
+
     // apply velocity to the bird
     birdVeloY += gravity;
     bird.y = Math.max(bird.y + birdVeloY, 0); // this returns the largest value which limits it to current bird position and 0 or top
     
+    // GameOver = true when bird falls through screen
     if (bird.y > gameHeight) {
         isGameOver = true;
+        playAudio("die");
     }
     
-    // bird physics
-    birdPhys();
+    if (isGameOver){
+        ctx.fillText("Game Over", 5, 90);
+    }
 }
 
 
@@ -150,14 +168,20 @@ function genPipes() {
     pipeArr.push(bottomPipe);
 }
 
-function birdPhys() {
-    bird.y += birdVeloY;
-}
-
-
 function detectCollision(a, b) { // rectangles
     return a.x < b.x + b.width &&
     a.x + a.width > b.x &&
     a.y < b.y + b.height &&
     a.y + a.height > b.y; // collision logic
+}
+
+
+function playAudio(status) {
+    if (status == "point") {
+        var audio = new Audio('./assets/sfx_point.wav');
+        audio.play();
+    } else if (status == "die") {
+        var audio = new Audio('./assets/sfx_die.wav');
+        audio.play();
+    }
 }
