@@ -1,31 +1,32 @@
-// board
-let board;
-let boardHeight = 640;
-let boardWidth = 360;
-let context;
+// canvas dimensions
+let game;
+let gameHeight = 640;
+let gameWidth = 360;
+
+let context; // context refers to the rendering context =  provides the drawing functions & properties
 
 // birdie
-let birdWidth = 34;
+let birdWidth = 34; // in pixels
 let birdHeight = 24; // w/h ratio = 17/12
-// pos of birdie at the start
-let birdX = boardWidth/8;
-let birdY = boardHeight/2;
+// init pos of birdie
+let birdX = gameWidth/8;
+let birdY = gameHeight/2;
 // image
 let birdImg;
 
+// bird properties
 let bird = {
-    x: birdX,
+    x: birdX, // pos
     y: birdY,
-    width: birdWidth,
+    width: birdWidth, // image dimensions
     height: birdHeight
 }
 
-// since we have multiple pipes, we need an array
+// array to store multiple pipes
 let pipeArr = [];
 let pipeWidth = 64;
-let pipeHeight = 512; // w/h ratio is 384/3072 (for the actual image) = 1/8
-// we scale it to 1/8
-let pipeX = boardWidth;
+let pipeHeight = 512; // w/h ratio is 384/3072 (for the actual image) = 1/8 (scale it by this factor)
+let pipeX = gameWidth;
 let pipeY = 0;
 
 let topPipeImg;
@@ -33,21 +34,24 @@ let bottomPipeImg;
 
 // physics
 let veloX = -2;
+let birdVeloY = 3; // bird jump speed
+let gravity = 0.4;
 
+// game mech
+let isGameOver = false;
+
+// When the entire page finishes loading, run this function
+// browser will automatically invoke them when that event happens
 window.onload = function() {
     // Gets a reference to the HTML Canvas Element
-    board = document.getElementById('board');
-    board.width = boardWidth;
-    board.height = boardHeight;
-    // This method gets that element's context— the thing onto which the drawing will be rendered.
-    ctx = board.getContext("2d")
-
-    // ctx.fillStyle = "green"
-    // ctx.fillRect(bird.x, bird.y, bird.width, bird.height);
+    game = document.getElementById('game');
+    game.width = gameWidth;
+    game.height = gameHeight;
+    ctx = game.getContext("2d") // provides CanvasRenderingContext2D object
 
     // Load Images
     birdImg = new Image(); // Create an HTMLImage Element
-    birdImg.src = "./assets/flappybird.png";
+    birdImg.src = "./assets/flappybird.gif";
     // birdImg variable hasn't loaded yet, so we load it
     birdImg.onload = function() {
         ctx.drawImage(birdImg, bird.x, bird.y, bird.width, bird.height);
@@ -59,32 +63,52 @@ window.onload = function() {
     bottomPipeImg = new Image();
     bottomPipeImg.src = "./assets/bottompipe.png"
 
+    document.addEventListener('keyup', (e) => {
+    if (e.code === 'Space' || e.code === 'ArrowUp'){
+        birdVeloY = -5; // this is the upward jump, the lower the val, the higher the jump
+    }
+    })
+
     requestAnimationFrame(update);
-    setInterval(genPipes, 1500); // generate pipes every 1500ms = 1.5 seconds
+    setInterval(genPipes, 1500); // generate x per ms
 }
 
 // Main Game Loop
 function update() {
     requestAnimationFrame(update);
-    ctx.clearRect(0, 0, board.width, board.height);
+    if (isGameOver) {
+        return;
+    }
+    ctx.clearRect(0, 0, game.width, game.height); // erases whole canvas
 
-    // bird
+    // render bird
     ctx.drawImage(birdImg, bird.x, bird.y, bird.width, bird.height);
 
-    // pipes
+    // render pipes infinitely
     for (let i = 0; i < pipeArr.length; i++) {
         let pipe = pipeArr[i];
         pipe.x += veloX;
         ctx.drawImage(pipe.img, pipe.x, pipe.y, pipe.width, pipe.height);
+        if (detectCollision(bird, pipe)) {
+            isGameOver = true;
+        }
     }
+
+    // apply velocity to the bird
+    birdVeloY += gravity;
+    bird.y = Math.max(bird.y + birdVeloY, 0); // this returns the largest value which limits it to current bird position and 0 or top
+    // bird physics
+    birdPhys();
 }
 
 
 function genPipes() {
-
+    if (isGameOver) {
+        return
+    }
     let randomPipeY = pipeY - pipeHeight/4 - Math.random()*(pipeHeight/2);
 
-    let openingSpace = boardHeight/4;
+    let openingSpace = gameHeight/4; // set space to 1/4 of the game height
 
     let topPipe = {
         img: topPipeImg,
@@ -104,6 +128,17 @@ function genPipes() {
         height: pipeHeight,
         isPassed: false
     }
-
     pipeArr.push(bottomPipe);
+}
+
+function birdPhys() {
+    bird.y += birdVeloY;
+}
+
+
+function detectCollision(a, b) { // rectangles
+    return a.x < b.x + b.width &&
+    a.x + a.width > b.x &&
+    a.y < b.y + b.height &&
+    a.y + a.height > b.y; // collision logic
 }

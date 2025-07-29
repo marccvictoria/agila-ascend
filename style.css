@@ -9,7 +9,6 @@ body {
     text-align: center;
 }
 
-#board {
-    /* background-color: skyblue; */
+#game {
     background-image: url('./assets/flappybirdbg.png');
 }
