@@ -40,6 +40,7 @@ let gravity = 0.4;
 // game mech
 let isGameOver = false;
 let score = 0;
+let isGameStart = false;
 
 // game over pop up
 let gameOverScore;
@@ -90,15 +91,17 @@ window.onload = function() {
 
     document.addEventListener('keyup', (e) => {
     if (e.code === 'Space' || e.code === 'ArrowUp'){
+        // physics
         birdVeloY = -6; // this is the upward jump, the lower the val, the higher the jump
         playAudio("wing");
-
+        isGameStart = true;
         // reset game if game over
         if (isGameOver) {
             bird.y = birdY;
             pipeArr = [];
             score = 0;
             isGameOver = false;
+            isGameStart = true;
         }
     }
     })
@@ -148,8 +151,12 @@ function update() {
         pipeArr.shift(); // removes first element in the array
     }
 
+    // physics
     // apply velocity to the bird
-    birdVeloY += gravity;
+    if (isGameStart == true) {
+        birdVeloY += gravity;
+    }
+
     bird.y = Math.max(bird.y + birdVeloY, 0); // this returns the largest value which limits it to current bird position and 0 or top
     
     // GameOver = true when bird falls through screen
