@@ -10,5 +10,7 @@ body {
 }
 
 #game {
-    background-image: url('./assets/flappybirdbg.png');
+    background-image: url('./assets/bg1.png');
+    background-position: center;
+    background-size: cover;
 }
