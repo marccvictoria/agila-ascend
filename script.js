@@ -140,7 +140,7 @@ window.onload = function() {
     }
     })
 
-    document.addEventListener('touchstart', (e) => {
+    game.addEventListener('touchstart', (e) => {
     // physics
     birdVeloY = -6; // this is the upward jump, the lower the val, the higher the jump
     playAudio("wing");
