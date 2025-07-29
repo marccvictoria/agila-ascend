@@ -46,6 +46,9 @@ let isGameStart = false;
 let gameOverScore;
 let restart;
 
+// pipegen for visibilitychange
+let pipeInterval;
+
 let GOSProp = {
     x: gameWidth/3.2,
     y: gameHeight/8,
@@ -152,8 +155,19 @@ window.onload = function() {
     }
     })
 
+    pipeInterval = setInterval(genPipes, 1500);
+    document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+        clearInterval(pipeInterval); // pause generation
+        console.log('Tab hidden – generation paused');
+    } else {
+        clearInterval(pipeInterval); // clear old interval (if any)
+        pipeInterval = setInterval(genPipes, 1500); // resume
+        console.log('Tab visible – generation resumed');
+    }
+    });
+
     requestAnimationFrame(update);
-    setInterval(genPipes, 1500); // generate x per ms
 }
 
 // Main Game Loop
