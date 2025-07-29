@@ -131,6 +131,21 @@ window.onload = function() {
     }
     })
 
+    document.addEventListener('touchstart', (e) => {
+    // physics
+    birdVeloY = -6; // this is the upward jump, the lower the val, the higher the jump
+    playAudio("wing");
+    isGameStart = true;
+    // reset game if game over
+    if (isGameOver) {
+        bird.y = birdY;
+        pipeArr = [];
+        score = 0;
+        isGameOver = false;
+        isGameStart = true;
+    }
+    })
+
     requestAnimationFrame(update);
     setInterval(genPipes, 1500); // generate x per ms
 }
