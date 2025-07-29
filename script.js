@@ -179,14 +179,16 @@ window.onload = function() {
             clickY >= resProp.y &&
             clickY <= resProp.y + resProp.height
         ) {
-            // Restart the game
-            birdVeloY = 0;
-            bird.y = birdY;
-            pipeArr = [];
-            score = 0;
-            isGameOver = false;
-            isGameStart = false;
-            console.log("Restart clicked");
+            if (isGameOver == true) {
+                // Restart the game
+                birdVeloY = 0;
+                bird.y = birdY;
+                pipeArr = [];
+                score = 0;
+                isGameOver = false;
+                isGameStart = false;
+                console.log("Restart clicked");
+            }
         }
         })
 
