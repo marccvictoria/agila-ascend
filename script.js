@@ -167,6 +167,29 @@ window.onload = function() {
     }
     });
 
+    game.addEventListener('click', (e) => {
+        const rect = game.getBoundingClientRect();
+        const clickX = e.clientX - rect.left; //  clientX is the horizontal position of the mouse relative to the viewport
+        const clickY = e.clientY - rect.top; // distance in pixels between the top edge of the viewport and the top edge of the canvas element.
+
+         // Check if click is inside the restart image bounds
+        if (
+            clickX >= resProp.x &&
+            clickX <= resProp.x + resProp.width &&
+            clickY >= resProp.y &&
+            clickY <= resProp.y + resProp.height
+        ) {
+            // Restart the game
+            birdVeloY = 0;
+            bird.y = birdY;
+            pipeArr = [];
+            score = 0;
+            isGameOver = false;
+            isGameStart = false;
+            console.log("Restart clicked");
+        }
+        })
+
     requestAnimationFrame(update);
 }
 
