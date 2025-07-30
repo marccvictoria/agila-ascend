@@ -1,3 +1,8 @@
+/* CREDITS
+- Music used from https://www.FesliyanStudios.com (Retro Forest - by David Fesliyan)
+*/
+console.log('© Music used from https://www.FesliyanStudios.com (Retro Forest - by David Fesliyan)');
+
 // canvas dimensions
 let game;
 let gameHeight = 640;
@@ -136,11 +141,17 @@ window.onload = function() {
     restart = new Image();
     restart.src = "./assets/game_menu/restart.png"
 
+    // bgm
+    document.addEventListener("keyup", (e) => {
+    if (e.code === 'Space' || e.code === 'ArrowUp'){
+        playAudio("bgm");
+    }
+    }, {once : true})// runs only once, after the first click
+
     document.addEventListener('keyup', (e) => {
     if (e.code === 'Space' || e.code === 'ArrowUp'){
         // physics
         birdVeloY = -6; // this is the upward jump, the lower the val, the higher the jump
-        playAudio("wing");
         isGameStart = true;
         // reset game if game over
         if (isGameOver) {
@@ -152,7 +163,6 @@ window.onload = function() {
     game.addEventListener('touchstart', (e) => {
     // physics
     birdVeloY = -6; // this is the upward jump, the lower the val, the higher the jump
-    playAudio("wing");
     isGameStart = true;
     // reset game if game over
     if (isGameOver) {
@@ -185,7 +195,7 @@ window.onload = function() {
     }
     });
 
-    game.addEventListener('click', (e) => {
+    game.addEventListener('click', (e) => { // restart button
         const rect = game.getBoundingClientRect();
         const clickX = e.clientX - rect.left; //  clientX is the horizontal position of the mouse relative to the viewport
         const clickY = e.clientY - rect.top; // distance in pixels between the top edge of the viewport and the top edge of the canvas element.
@@ -210,7 +220,6 @@ window.onload = function() {
             }
         }
         })
-
     requestAnimationFrame(update);
 }
 
@@ -363,8 +372,9 @@ function playAudio(status) {
     } else if (status == "die") {
         var audio = new Audio('./assets/music/sfx_mcdie.mp3');
         audio.play();
-    } else if (status == "wing") {
-        var audio = new Audio('./assets/music/sfx_bruh.mp3');
+    } else if (status == "bgm") {
+        var audio = new Audio('./assets/music/bgm.mp3');
+        audio.loop = true;
         audio.play();
     }
 }
