@@ -357,11 +357,15 @@ function genPipes() {
     pipeArr.push(bottomPipe);
 }
 
-function detectCollision(a, b) { // rectangles
-    return a.x < b.x + b.width &&
-    a.x + a.width > b.x &&
-    a.y < b.y + b.height &&
-    a.y + a.height > b.y; // collision logic
+//  AABB (Axis-Aligned Bounding Box) collision detection.
+function detectCollision(a, b) { // bird, pipe
+    const padding = 5; // shrink hitbox by 5px on all sides
+    
+    // checks for areas where 2 entities intersect
+    return (a.x + padding) < b.x + b.width && // Bird’s left side is left of the pipe’s right side.
+    (a.x + a.width - padding)> b.x && //  Bird’s right side is right of the pipe’s left side.
+    (a.y + padding) < b.y + b.height && // Bird’s top side is above the pipe’s bottom side.
+    (a.y + a.height - padding) > b.y; // Bird’s bottom side is below the pipe’s top side.
 }
 
 
@@ -374,6 +378,7 @@ function playAudio(status) {
         audio.play();
     } else if (status == "bgm") {
         var audio = new Audio('./assets/music/bgm.mp3');
+        audio.volume = 0.1;
         audio.loop = true;
         audio.play();
     }
