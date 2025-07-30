@@ -49,6 +49,15 @@ let restart;
 // pipegen for visibilitychange
 let pipeInterval;
 
+// cave
+let bat;
+let batArr = [];
+let randYPos = 0;
+let batX = gameWidth;
+let batWidth = 29;
+let batHeight = 15;
+let batVeloX = -5
+
 let GOSProp = {
     x: gameWidth/3.2,
     y: gameHeight/8,
@@ -167,6 +176,14 @@ window.onload = function() {
     }
     });
 
+    // bats
+    // load bat image
+    bat = new Image();
+    bat.src = './assets/bat.png'
+    bat.onload = () => {
+        setInterval(genBats, 1500);
+    }
+
     game.addEventListener('click', (e) => {
         const rect = game.getBoundingClientRect();
         const clickX = e.clientX - rect.left; //  clientX is the horizontal position of the mouse relative to the viewport
@@ -207,7 +224,7 @@ function update() {
     ctx.drawImage(birdImg, bird.x, bird.y, bird.width, bird.height);
 
     // render pipes infinitely
-    for (let i = 0; i < pipeArr.length; i++) {
+    for (let i = 0; i < pipeArr.length; i++) { // moves the pipe
         let pipe = pipeArr[i];
         pipe.x += veloX;
         ctx.drawImage(pipe.img, pipe.x, pipe.y, pipe.width, pipe.height);
@@ -225,6 +242,9 @@ function update() {
             playAudio("die");
         }
     }
+
+    // render bats
+    renderBats();
 
     // score
     ctx.fillStyle = "white";
@@ -329,4 +349,29 @@ function playAudio(status) {
 function birdRotUp() {
     ctx.drawImage(birdImg, bird.x, bird.y, bird.width, bird.height);
     ctx.rotate((45 * Math.PI) / 180)
+}
+
+function genBats() {
+    if (isGameOver) {
+        return;
+    }
+
+    randYPos = gameHeight * Math.random();
+
+    let batProp = {
+        img: bat,
+        x: batX,
+        y: randYPos,
+        width: batWidth,
+        height: batHeight
+    }
+    batArr.push(batProp); // pushes batProp obj
+}
+
+function renderBats() {
+    for (let i = 0; i < batArr.length; i++) {
+        const b = batArr[i]; //  retrieves the i-th bat object from the batArr
+        b.x += batVeloX;
+        ctx.drawImage(b.img, b.x, b.y, b.width, b.height);
+    }
 }
