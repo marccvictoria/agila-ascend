@@ -306,9 +306,6 @@ function randScoreAlgo(n) {
 function updateCave(score) {
     let currRandScore = randScoreAlgo((caveChangeCount));
 
-    console.log(currRandScore);
-    console.log(isCCCUpdated);
-
     if (score > currRandScore && score < currRandScore + 10) {
         if (!isCCCUpdated) {
             batInterval = setInterval(genBats, 1500);
