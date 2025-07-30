@@ -166,17 +166,21 @@ window.onload = function() {
     bat.src = './assets/bat.png'
 
     pipeInterval = setInterval(genPipes, 1500);
-    batInterval = setInterval(genBats, 1500);
+    // if (isCCCUpdated == true) {
+    //     batInterval = setInterval(genBats, 1500);
+    // }
+    
+
     document.addEventListener("visibilitychange", () => {
     if (document.hidden) {
         clearInterval(pipeInterval); // pause generation
-        clearInterval(batInterval); 
+        // clearInterval(batInterval); 
         console.log('Tab hidden – generation paused');
     } else {
         clearInterval(pipeInterval); // clear old interval (if any)
         pipeInterval = setInterval(genPipes, 1500); // resume
-        clearInterval(batInterval); 
-        batInterval = setInterval(genBats, 1500);
+        // clearInterval(batInterval); 
+        // batInterval = setInterval(genBats, 1500);
         console.log('Tab visible – generation resumed');
     }
     });
@@ -306,10 +310,14 @@ function updateCave(score) {
     console.log(isCCCUpdated);
 
     if (score > currRandScore && score < currRandScore + 10) {
+        if (!isCCCUpdated) {
+            batInterval = setInterval(genBats, 1500);
+        }
         game.style.backgroundImage = "url('./assets/cave.png')";
         isCCCUpdated = true;
     } else {
         game.style.backgroundImage = "url('./assets/bg1.png')";
+        clearInterval(batInterval);
         isCCCUpdated = false;
     }
 }
@@ -392,6 +400,8 @@ function renderBats() {
         b.x += batVeloX;
         ctx.drawImage(b.img, b.x, b.y, b.width, b.height);
     }
+    // Remove bats that went off-screen to the left
+    batArr = batArr.filter(b => b.x + b.width > 0);
 }
 
 function resetSettings() {
@@ -403,4 +413,5 @@ function resetSettings() {
     score = 0;
     isGameOver = false;
     isGameStart = true;
+    isCCCUpdated = false;
 }
