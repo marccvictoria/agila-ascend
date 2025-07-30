@@ -148,6 +148,10 @@ window.onload = function() {
     }
     }, {once : true})// runs only once, after the first click
 
+    game.addEventListener("touchstart", (e) => {
+        playAudio("bgm");
+    }, {once : true})// runs only once, after the first click
+
     document.addEventListener('keyup', (e) => {
     if (e.code === 'Space' || e.code === 'ArrowUp'){
         // physics
